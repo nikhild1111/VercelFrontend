@@ -20,7 +20,7 @@ const CartItem = ({item, itemIndex}) => {
   <p className='w-40 text-gray-400 font-normal text-[10px] mx-auto'>{item.description.split(" ").slice(0,10).join(" ")+"..."}</p>
 </div>
 <div className='h-[180px]'>
-  <img src={item.image} className='h-full w-full'></img>     </div>
+  <img src={`${process.env.REACT_APP_BACKEND_URL}${item.image}`} className='h-full w-full'></img>     </div>
 <div className='flex justify-between gap-12 items-center w-full mt-5'>
   <div>
       <p className='text-green-600 font-semibold'>${item.price}</p>
