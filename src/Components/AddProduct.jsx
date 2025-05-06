@@ -29,7 +29,7 @@ function AddProduct() {
     }
 
     try {
-      await axios.post('http://localhost:4000/api/products/add', data);
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/products/add`, data);
       toast.success('Product added successfully!');
     } catch (err) {
       toast.error('Failed to add product');

@@ -54,7 +54,7 @@ const isValidEmail = (email) => {
 
 try{
 
-  const response=await axios.post("http://localhost:4000/api/v1/login",{
+  const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/login`, {
     email,password
   });
 

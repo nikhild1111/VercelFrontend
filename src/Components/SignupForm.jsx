@@ -70,11 +70,12 @@ const isValidEmail = (email) => {
         toast.error("Phone number must be exactly 10 digits");
         return ;
       }
-  
+
+
 
       // use the axios for the request it will give the data directly and we can acess it
       try {
-        const response = await axios.post("http://localhost:4000/api/v1/signup", {
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/signup`, {
           name,
           email,
           password,

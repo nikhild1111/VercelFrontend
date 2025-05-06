@@ -7,7 +7,7 @@ const Home = (props) => {
     let setIsLoggedIn=props.setIsLoggedIn;
 
     // const [API_URL, setApiUrl] = useState("https://fakestoreapi.com/products");
-    const [API_URL, setApiUrl] = useState("http://localhost:4000/api/products");
+    const [API_URL, setApiUrl] = useState(`${process.env.REACT_APP_BACKEND_URL}/api/products`);
     const [loading, setLoading] = useState(false);
     const [Posts, setPosts] = useState([]);
     const [formData, setData] = useState({ electronics:false,jewelery:false,"men's clothing":false,"women's clothing":false });
