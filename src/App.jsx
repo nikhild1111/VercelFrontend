@@ -1,38 +1,141 @@
+// import { Route, Routes } from "react-router-dom";
+// import Navbar from "./Components/Navbar";
+// import Cartitem from "./Components/Cartitem";
+// import Product from "./Components/Product";
+// import Home from "./Pages/Home";
+// import Cart from "./Pages/Cart";
+// import Login from "./Pages/Login";
+// import Signup from "./Pages/Signup";
+// import { useState ,useEffect} from "react";
+// import Admin from "./Pages/Admin";
+// import toast from 'react-hot-toast';
+// import axios from 'axios';
+// import { useDispatch } from "react-redux";
+// import { loginSuccess } from './redux/Slices/userSlice'; 
+
+// const App = () => {
+
+//   const dispatch = useDispatch();
+//  useEffect(() => {
+//     const token = localStorage.getItem("token");
+
+//     if (!token) return;
+
+//     axios.get("/api/user/isvalid", {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+      
+//     }, {
+//   withCredentials: true // ✅ THIS IS ESSENTIAL
+// })
+//     .then((response) => {
+//       if (response.data.success) {
+//         const user = response.data.payload; // contains user info
+//         dispatch(loginSuccess(user));
+//         toast.success(response.data.message || "Welcome back!");
+//       }
+//     })
+//     .catch((error) => {
+//       console.error("Token verification failed:", error);
+//       localStorage.removeItem("token");
+//       localStorage.removeItem("user");
+//       toast.error("Session expired. Please login again.");
+//     });
+//   }, []);
+
+//   return (<div>
+
+//     {/* create one fised button atthe cnter of every page at the left end whcih navgate to the home directly */}
+
+//      {/* for ficed navbar usefull */}
+//         {/* <div className="bg-slate-900 fixed top-0 left-0 w-full z-50">
+//         <Navbar ></Navbar>
+//         </div> */}
+//         <div className="bg-slate-900">
+//         <Navbar ></Navbar>
+//         </div>
+//         <Routes>
+//           <Route path="/" element={ <Home ></Home>}></Route>
+//           <Route path="/Login" element={<Login ></Login>}></Route>
+//           <Route path="/Admin" element={<Admin ></Admin>}></Route>
+//           <Route path="/Signup" element={<Signup ></Signup>}></Route>
+//           <Route path="/Home" element={<Home ></Home>}></Route>
+//           <Route path="/cart" element={<Cart></Cart>}></Route>
+//         </Routes>
+
+//   </div>)
+// };
+
+// export default App;
+
 import { Route, Routes } from "react-router-dom";
+import AddressManagement from './Components/AddressManagement';
 import Navbar from "./Components/Navbar";
-import Cartitem from "./Components/Cartitem";
-import Product from "./Components/Product";
 import Home from "./Pages/Home";
 import Cart from "./Pages/Cart";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
-import { useState ,useEffect} from "react";
 import Admin from "./Pages/Admin";
+import toast from 'react-hot-toast';
+import axios from 'axios';
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { loginSuccess } from './redux/Slices/userSlice';
 
 const App = () => {
+  const dispatch = useDispatch();
 
-  const[isLogin,setIsLoggedIn]=useState(false);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-  return (<div>
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/isvalid`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true, // ✅ correct place
+    })
+    .then((response) => {
+      if (response.data.success) {
+        const user = response.data.payload;
+        dispatch(loginSuccess(user));
+        toast.success(response.data.message || "Welcome back!");
+      }
+    })
+    .catch((error) => {
+      console.error("Token verification failed:", error);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      toast.error("Session expired. Please login again.");
+    });
+  }, [dispatch]);
 
-     
-        <div className="bg-slate-900">
-        <Navbar isLogin={isLogin} setIsLoggedIn={setIsLoggedIn}></Navbar>
-        </div>
-        <Routes>
-          <Route path="/" element={ <Home isLogin={isLogin} setIsLoggedIn={setIsLoggedIn}></Home>}></Route>
-          <Route path="/Login" element={<Login setIsLoggedIn={setIsLoggedIn}></Login>}></Route>
-          <Route path="/Admin" element={<Admin setIsLoggedIn={setIsLoggedIn}></Admin>}></Route>
-          <Route path="/Signup" element={<Signup setIsLoggedIn={setIsLoggedIn}></Signup>}></Route>
-          <Route path="/Home" element={<Home isLogin={isLogin} setIsLoggedIn={setIsLoggedIn}></Home>}></Route>
-          <Route path="/cart" element={<Cart></Cart>}></Route>
-        </Routes>
+  return (
+    <div>
+      {/* Optional fixed navbar */}
+      {/* <div className="bg-slate-900 fixed top-0 left-0 w-full z-50">
+        <Navbar />
+      </div> */}
 
-  </div>)
+      <div className="bg-slate-900">
+        <Navbar />
+      </div>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+         <Route path="/addresses" element={<AddressManagement />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </div>
+  );
 };
 
 export default App;
-
 
 
 // first make the setrver 

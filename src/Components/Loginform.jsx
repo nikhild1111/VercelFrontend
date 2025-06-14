@@ -6,7 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
+import { useDispatch } from "react-redux";
+import { loginSuccess } from '../redux/Slices/userSlice.js';  // ✅ correct
+
+
 const Loginform = (props) => {
+
+  const dispatch = useDispatch();
     const navigate=useNavigate("");
     let setIsLoggedIn=props.setIsLoggedIn;
 const [formData,setformData]=useState({
@@ -56,11 +62,21 @@ try{
 
   const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/login`, {
     email,password
-  });
+  },
+ {
+  withCredentials: true // ✅ THIS IS ESSENTIAL
+}
+);
 
 if(response.data.success){
   // this means the user login is done
-  setIsLoggedIn(true);
+
+
+localStorage.setItem("token",response.data.token);
+  // setIsLoggedIn(true); //X
+   const user = response.data.payload; // user info
+
+    dispatch(loginSuccess(user));  // Save user info in Redux store
   toast.success(response.data.message);
   navigate("/Home")
 }else{

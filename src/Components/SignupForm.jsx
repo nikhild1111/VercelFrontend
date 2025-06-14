@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from "axios"; // Make sure axios is installed
 
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { loginSuccess, logout} from '../redux/Slices/userSlice.js'; 
 
+ 
 // imp error i just give a async fun in the SignupForm=async and its gives an error so keep this in mind
 const SignupForm = (props) => {
 
@@ -17,9 +21,10 @@ const SignupForm = (props) => {
   //   setPreview(URL.createObjectURL(file));
   // };
 
-
+    const { user,Cart} = useSelector((state) => state);
+ const dispatch=useDispatch();
+   let isLogin=user.isLoggedIn;
     const navigate=useNavigate("");
-    let setIsLoggedIn=props.setIsLoggedIn;
 const [formData,setformData]=useState({
     email:"",password:"",name:"",phone:"",confirmpassword:""
 })
@@ -30,7 +35,7 @@ function changeHandler(e){
        
      ...prev,[e.target.name]:e.target.value
     }));
-    console.log(formData);
+    // console.log(formData);
 }
 
 const isValidEmail = (email) => {
@@ -81,12 +86,18 @@ const isValidEmail = (email) => {
           password,
           phone,
           // role: "user", // optional field, or set default in schema
-        });
+        },
+       {
+  withCredentials: true // ✅ THIS IS ESSENTIAL
+});
     
         // if the respose send the successs it will be true and we get true
         if (response.data.success) {
           toast.success(response.data.message);//this will print the message of that
-          setIsLoggedIn(true);
+          const user = response.data.payload; // user info
+
+          localStorage.setItem("token", response.data.token);
+           dispatch(loginSuccess(user));  // Save user info in Redux store
           navigate("/Home"); // go to hoame page
         } else {
           toast.error(response.data.message || "Signup failed");
