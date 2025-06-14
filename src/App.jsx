@@ -74,6 +74,7 @@ import AddressManagement from './Components/AddressManagement';
 import Navbar from "./Components/Navbar";
 import Home from "./Pages/Home";
 import Cart from "./Pages/Cart";
+import Landingpage from "./Pages/Landingpage";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Admin from "./Pages/Admin";
@@ -123,7 +124,7 @@ const App = () => {
       </div>
 
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Landingpage />} />
         <Route path="/home" element={<Home />} />
          <Route path="/addresses" element={<AddressManagement />} />
         <Route path="/login" element={<Login />} />

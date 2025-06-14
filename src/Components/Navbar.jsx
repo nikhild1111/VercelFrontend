@@ -742,10 +742,10 @@ navigate('/home');
 
     dispatch(resetFilters()); // 🧹 Reset filters (you should define this if not done)
       
-         toast.success("Home Page");
+         toast.success("Landing Page");
     //  window.scrollTo({ top: 0, behavior: "smooth" }); // 3. Smooth scrol
     await dispatch(fetchFilteredProducts()); // 🔄 Fetch all products
-    navigate("/home"); // 🧭 Navigate to home
+    navigate("/"); // 🧭 Navigate to home
   };
 
   return (

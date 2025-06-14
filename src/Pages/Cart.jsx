@@ -67,7 +67,10 @@
 
 
 
-import React, { useState } from "react";
+
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+
 import { useSelector, useDispatch } from "react-redux";
 import { remove } from "../redux/Slices/CartSlice";
 import { AiFillDelete, AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
@@ -87,41 +90,31 @@ const Cart = () => {
   const [showProductModal, setShowProductModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState("");
+const [addresses, setAddresses] = useState([]); // Replace savedAddresses
+  const [loading, setLoading] = useState(false);
   
-  // Address form state
-  const [addressForm, setAddressForm] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-    addressType: "Home"
-  });
-  
-  // Sample addresses (replace with API call later)
-  const [savedAddresses] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      phone: "9876543210",
-      address: "123 Main Street, Apartment 4B",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400001",
-      addressType: "Home"
-    },
-    {
-      id: 2,
-      name: "John Doe",
-      phone: "9876543210",
-      address: "456 Office Complex, Floor 3",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400002",
-      addressType: "Office"
+   const fetchAddresses = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/addresses`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setAddresses(response.data.addresses || []);
+    } catch (error) {
+      toast.error("No Address Found");
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
   
   // Quantities state
   const [quantities, setQuantities] = useState(
@@ -179,7 +172,7 @@ const Cart = () => {
     });
   };
 
-  // no need as we are hanlding 
+  // no need as we are hanlding  using address manegment 
   // const handleAddressSubmit = () => {
   //   // Validate required fields
   //   if (!addressForm.name || !addressForm.phone || !addressForm.address || !addressForm.city || !addressForm.state || !addressForm.pincode) {
@@ -226,7 +219,7 @@ const Cart = () => {
           Your cart is empty!
         </h1>
         <button
-          onClick={() => window.location.href = "/"}
+          onClick={() => navigate("/")}
           className="uppercase bg-green-600 hover:bg-green-700 rounded-lg text-white transition duration-300 ease-linear mt-5 border-2 border-green-600 font-semibold p-3 px-10 tracking-wider"
         >
           Shop Now
@@ -578,18 +571,39 @@ const Cart = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Delivery Address
                 </label>
-                <select
+
+ <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-1">Select Delivery Address</label>
+      {loading ? (
+        <p className="text-gray-500">Loading addresses...</p>
+      ) : (
+        <select
+          value={selectedAddress}
+          onChange={(e) => setSelectedAddress(e.target.value)}
+          className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">Select Address</option>
+          {addresses.map((addr) => (
+            <option key={addr._id} value={addr._id}>
+              {addr.addressType} - {addr.address.substring(0, 30)}...
+            </option>
+          ))}
+        </select>
+      )}
+    </div>
+
+                {/* <select
                   value={selectedAddress}
                   onChange={(e) => setSelectedAddress(e.target.value)}
                   className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select Address</option>
                   {savedAddresses.map((addr) => (
-                    <option key={addr.id} value={addr.id}>
+                    <option key={addr._id} value={addr._id}>
                       {addr.addressType} - {addr.address.substring(0, 30)}...
                     </option>
                   ))}
-                </select>
+                </select> */}
               </div>
               
               <div className="space-y-3 mb-4">
@@ -787,12 +801,12 @@ const Cart = () => {
               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select Address</option>
-              {savedAddresses.map((addr) => (
-                <option key={addr.id} value={addr.id}>
-                  {addr.addressType} - {addr.address.substring(0, 30)}...
-                </option>
-              ))}
-            </select>
+             {addresses.map((addr) => (
+  <option key={addr._id} value={addr._id}>
+    {addr.addressType} - {addr.address.substring(0, 30)}...
+  </option>
+))}   
+ </select>
           </div>
           
           <div className="space-y-3 mb-6">
