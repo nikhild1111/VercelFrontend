@@ -705,6 +705,7 @@ navigate('/home');
 
 };
   const logoutFunction = () => {
+    localStorage.removeItem("lastPath");
     localStorage.removeItem("token");
     dispatch(logout());
     toast.error("Logged Out");

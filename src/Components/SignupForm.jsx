@@ -98,7 +98,7 @@ const isValidEmail = (email) => {
 
           localStorage.setItem("token", response.data.token);
            dispatch(loginSuccess(user));  // Save user info in Redux store
-          navigate("/Home"); // go to hoame page
+          navigate("/"); // go to hoame page
         } else {
           toast.error(response.data.message || "Signup failed");
         }

@@ -78,7 +78,7 @@ localStorage.setItem("token",response.data.token);
 
     dispatch(loginSuccess(user));  // Save user info in Redux store
   toast.success(response.data.message);
-  navigate("/Home")
+  navigate("/")
 }else{
   toast.error(response.data.message);
 }

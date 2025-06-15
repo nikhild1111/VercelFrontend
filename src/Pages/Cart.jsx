@@ -219,7 +219,7 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
           Your cart is empty!
         </h1>
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/home")}
           className="uppercase bg-green-600 hover:bg-green-700 rounded-lg text-white transition duration-300 ease-linear mt-5 border-2 border-green-600 font-semibold p-3 px-10 tracking-wider"
         >
           Shop Now

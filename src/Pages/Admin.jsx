@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import AddProduct from '../Components/AddProduct';
+import AdminDashboard from '../Components/AdminDashboard';
 
 
 const Admin = () => {
@@ -37,9 +38,15 @@ const Admin = () => {
 
   return (
     <div>
-      {authorized ? <AddProduct /> : null}
+      {authorized ? <AdminDashboard /> : null}
+      {/* {authorized ? <AddProduct /> : null} */}
     </div>
   );
 };
 
 export default Admin;
+
+
+
+
+

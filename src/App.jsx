@@ -83,10 +83,27 @@ import axios from 'axios';
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { loginSuccess } from './redux/Slices/userSlice';
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const App = () => {
-  const dispatch = useDispatch();
 
+  const dispatch = useDispatch();
+ const navigate=useNavigate("");
+
+// it is usefull to redirect tot he same page where we are standing even when the website reloads
+const location = useLocation(); // ✅ this is fine
+  useEffect(() => {
+    localStorage.setItem('lastPath', location.pathname);
+  }, [location]);
+  useEffect(() => {
+      const lastPath = localStorage.getItem("lastPath") || "/";
+   navigate(lastPath);
+  }, []);
+
+
+
+    // ✅ Token validation (already good)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -111,6 +128,9 @@ const App = () => {
       toast.error("Session expired. Please login again.");
     });
   }, [dispatch]);
+
+    // ✅ Get last path or default to /home
+  const lastPath = localStorage.getItem("lastPath") || "/";
 
   return (
     <div>
