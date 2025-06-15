@@ -51,6 +51,9 @@
 
 // export default Product
 
+
+// 
+// this was we have creted and its a best onq
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { add, remove } from '../redux/Slices/CartSlice';
@@ -87,7 +90,7 @@ Modal.setAppElement('#root');
   return (
     <>
       <div
-        className='flex flex-col items-start justify-between hover:shadow-lg shadow-md border border-gray-500 transition duration-300 ease-in gap-3 p-6 mt-4 mx-auto rounded-xl xs:h-[416px] md:hover:scale-110  xs:w-[352px] h-[390px]  w-[300px] cursor-pointer bg-white'
+        className='flex flex-col items-start justify-between hover:shadow-lg shadow-md border border-gray-500 transition duration-300 ease-in gap-3 p-3 mt-10 mx-auto rounded-xl xs:h-[416px] md:hover:scale-110  xs:w-[322px] h-[360px]  w-[280px] cursor-pointer bg-white'
         onClick={() => setModalIsOpen(true)}
       >
         <p className='text-gray-800 font-bold text-[16px] w-full pl-1 truncate'>{post.title}</p>
@@ -101,7 +104,7 @@ Modal.setAppElement('#root');
           />
         </div> */}
         {/* Image Container with Improved Responsiveness */}
-<div className='h-[250px] w-full overflow-hidden border border-gray-200 rounded-md flex justify-center items-center bg-white xs:h-[270px]'>
+<div className='h-[240px] w-full overflow-hidden border border-gray-200 rounded-md flex justify-center items-center bg-white xs:h-[270px]'>
   <img
     src={`${process.env.REACT_APP_BACKEND_URL}${post.image}`}
     alt='Product'

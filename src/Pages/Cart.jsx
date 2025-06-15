@@ -572,7 +572,7 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
                   Delivery Address
                 </label>
 
- <div className="mb-4">
+ {/* <div className="mb-4">
       <label className="block text-sm font-medium text-gray-700 mb-1">Select Delivery Address</label>
       {loading ? (
         <p className="text-gray-500">Loading addresses...</p>
@@ -580,6 +580,35 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
         <select
           value={selectedAddress}
           onChange={(e) => setSelectedAddress(e.target.value)}
+          className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">Select Address</option>
+          {addresses.map((addr) => (
+            <option key={addr._id} value={addr._id}>
+              {addr.addressType} - {addr.address.substring(0, 30)}...
+            </option>
+          ))}
+        </select>
+      )}
+    </div> */}
+
+
+
+     <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Select Delivery Address
+      </label>
+      {loading ? (
+        <p className="text-gray-500">Loading addresses...</p>
+      ) : (
+        <select
+          value={selectedAddress}
+          onChange={(e) => setSelectedAddress(e.target.value)}
+          onClick={() => {
+            if (addresses.length === 0) {
+              navigate('/addresses');
+            }
+          }}
           className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">Select Address</option>

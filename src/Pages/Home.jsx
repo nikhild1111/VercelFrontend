@@ -212,17 +212,20 @@ const Home = () => {
   };
 
   return (
-    <div className='relative'>
+    <div className='relative mt-4'>
       {loading ? <Spinner /> : posts.length > 0 ? (
         <>
           {/* ADDED: Smooth transition wrapper for content */}
           <div className={`transition-all duration-500 ease-in-out ${loading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
             <div className='grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
               {posts.map(post => (
-                <Product key={post._id} post={post} />
+                <Product  key={post._id} post={post} />
               ))}
             </div>
           </div>
+
+
+
 
 
           {/* this is the pagantion original */}
