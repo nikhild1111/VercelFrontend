@@ -167,6 +167,7 @@ const Home = () => {
 
   const navigate = useNavigate();
   const query = useQuery();
+  
     useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);

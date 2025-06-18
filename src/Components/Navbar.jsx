@@ -597,14 +597,22 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { setFilters,resetFilters } from "../redux/Slices/filtersSlice";
+import { clearCart } from "../redux/Slices/CartSlice"; // adjust the path if needed
+
 import { fetchFilteredProducts } from "../redux/thunks/filterProductsThunk";
 
 import { loginSuccess, logout } from '../redux/Slices/userSlice.js';
 import { Search, ShoppingCart, User, Home, Menu, X, Filter, Settings } from "lucide-react";
 
+
+
 const Navbar = () => {
-  const { user, Cart } = useSelector((state) => state);
+  const { user } = useSelector((state) => state);
+  const { totalItems } = useSelector((state) => state.Cart);
+
   const dispatch = useDispatch();
+
+  
 
   const isLogin = user.isLoggedIn;
   const userinfo = user.user;
@@ -680,6 +688,12 @@ const [showFilterModal, setShowFilterModal] = useState(false);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+console.log(totalItems);
+
+ }, []);
+
+
 const handleSearch = () => {
   if (!searchTerm.trim()) return; // Avoid empty searches
 
@@ -706,8 +720,11 @@ navigate('/home');
 };
   const logoutFunction = () => {
     localStorage.removeItem("lastPath");
+     localStorage.removeItem("cart");
     localStorage.removeItem("token");
+      dispatch(clearCart());
     dispatch(logout());
+    navigate("/")
     toast.error("Logged Out");
   };
 
@@ -846,18 +863,18 @@ navigate('/home');
   {/* Cart Button */}
   <button
     onClick={() => {
-      if (isLogin) {
+      // if (isLogin) {
         navigate("/cart");
-      } else {
-        toast.error("Please login first");
-      }
+      // } else {
+        // toast.error("Please login first");
+      // }
     }}
     className="relative p-2 hover:bg-richblack-800 rounded-lg transition-colors"
   >
     <ShoppingCart size={24} />
-    {Cart.length > 0 && (
+    {totalItems > 0 && (
       <span className='absolute -top-1 -right-1 bg-red-500 text-xs w-5 h-5 flex justify-center items-center animate-bounce rounded-full text-white font-bold'>
-        {Cart.length}
+        {totalItems}
       </span>
     )}
   </button>
@@ -942,18 +959,18 @@ navigate('/home');
         {/* Cart Button */}
         <button
   onClick={() => {
-    if (isLogin) {
+    // if (isLogin) {
       navigate("/cart");
-    } else {
-      toast.error("Please login first");
-    }
+    // } else {
+      // toast.error("Please login first");
+    // }
   }}
   className="relative p-2 hover:bg-richblack-800 rounded-lg transition-colors"
 >
   <ShoppingCart size={24} />
-  {Cart.length > 0 && (
-    <span className='absolute -top-1 -right-1 bg-red-500 text-xs w-5 h-5 flex justify-center items-center animate-bounce rounded-full text-white font-bold'>
-      {Cart.length}
+  {totalItems > 0 && (
+    <span className='absolute -top-1 -right-1 bg-red-500 text-xs w-4 h-4 flex justify-center items-center animate-bounce rounded-full text-white font-bold'>
+      {totalItems}
     </span>
   )}
 </button>
@@ -1127,19 +1144,28 @@ navigate('/home');
             <div className="absolute right-0 mt-2 w-80 lg:w-96 bg-white text-black p-6 rounded-xl shadow-2xl z-50 space-y-4 border">
               {isLogin && (
                 <div>
-                  {userinfo?.role === "Admin" ? (
-                    <Link to="/Admin">
-                      <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors font-medium">
-                        Admin Panel
-                      </button>
-                    </Link>
-                  ) : (
-                    <Link to="/UserPanel">
-                      <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors font-medium">
-                        User Panel
-                      </button>
-                    </Link>
-                  )}
+             {userinfo?.role === "Admin" ? (
+  <>
+    <Link to="/Admin">
+      <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors font-medium relative z-[9999] mb-2">
+        Admin Panel
+      </button>
+    </Link>
+
+    <Link to="/userpanel">
+      <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors font-medium relative z-[9999]">
+        User Panel
+      </button>
+    </Link>
+  </>
+) : (
+  <Link to="/userpanel">
+    <button className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors font-medium relative z-[9999]">
+      User Panel
+    </button>
+  </Link>
+)}
+
                 </div>
               )}
 

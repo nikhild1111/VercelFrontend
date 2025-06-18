@@ -71,6 +71,7 @@
 
 import { Route, Routes } from "react-router-dom";
 import AddressManagement from './Components/AddressManagement';
+import  UserPanel from './Components/UserPanel';
 import Navbar from "./Components/Navbar";
 import Home from "./Pages/Home";
 import Cart from "./Pages/Cart";
@@ -80,11 +81,12 @@ import Signup from "./Pages/Signup";
 import Admin from "./Pages/Admin";
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { loginSuccess } from './redux/Slices/userSlice';
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { syncCartToBackend } from "./redux/thunks/cartThunks"; // your thunk
 
 const App = () => {
 
@@ -129,7 +131,7 @@ const location = useLocation(); // ✅ this is fine
     });
   }, [dispatch]);
 
-    // ✅ Get last path or default to /home
+    // ✅ Get last path or default to /
   const lastPath = localStorage.getItem("lastPath") || "/";
 
   return (
@@ -139,6 +141,12 @@ const location = useLocation(); // ✅ this is fine
         <Navbar />
       </div> */}
 
+
+
+
+
+
+
       <div className="bg-slate-900">
         <Navbar />
       </div>
@@ -147,6 +155,7 @@ const location = useLocation(); // ✅ this is fine
         <Route path="/" element={<Landingpage />} />
         <Route path="/home" element={<Home />} />
          <Route path="/addresses" element={<AddressManagement />} />
+         <Route path="/userpanel" element={<UserPanel />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/cart" element={<Cart />} />
@@ -196,3 +205,12 @@ export default App;
 //  when hit a requst form the postman check content-type as application/json
 // alway use the cross or the app.use send static file before rout else error will come
 //use all the middlee were before the routes
+
+
+
+
+
+
+
+
+// admon panel me infinaite scroll used 

@@ -3,12 +3,12 @@ import { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from "axios"; // Make sure axios is installed
+import { overwriteCartToBackend} from '../redux/thunks/overwriteCartToBackend';
 
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { loginSuccess, logout} from '../redux/Slices/userSlice.js'; 
-
- 
+ import { syncCartToBackend } from '../redux/thunks/cartThunks';
 // imp error i just give a async fun in the SignupForm=async and its gives an error so keep this in mind
 const SignupForm = (props) => {
 
@@ -91,17 +91,41 @@ const isValidEmail = (email) => {
   withCredentials: true // ✅ THIS IS ESSENTIAL
 });
     
-        // if the respose send the successs it will be true and we get true
-        if (response.data.success) {
-          toast.success(response.data.message);//this will print the message of that
-          const user = response.data.payload; // user info
+        // // if the respose send the successs it will be true and we get true
+        // if (response.data.success) {
+        //   toast.success(response.data.message);//this will print the message of that
+        //   const user = response.data.payload; // user info
+        //    dispatch(syncCartToBackend());
+        //   localStorage.setItem("token", response.data.token);
+        //    dispatch(loginSuccess(user));  // Save user info in Redux store
+        //   navigate("/"); // go to hoame page
+        // } else {
+        //   toast.error(response.data.message || "Signup failed");
+        // }
 
-          localStorage.setItem("token", response.data.token);
-           dispatch(loginSuccess(user));  // Save user info in Redux store
-          navigate("/"); // go to hoame page
-        } else {
-          toast.error(response.data.message || "Signup failed");
-        }
+
+if (response.data.success) {
+  localStorage.setItem("token", response.data.token);
+  const user = response.data.payload;
+
+  try {
+    // 1️⃣ First, merge guest cart with backend cart
+    await dispatch(overwriteCartToBackend());
+
+    // 2️⃣ Set user in Redux (now login state is true)
+    dispatch(loginSuccess(user));
+
+    // 3️⃣ Now that cart is merged, show success
+    toast.success(response.data.message);
+    navigate("/");
+  } catch (error) {
+    toast.error("Login succeeded but cart sync failed.");
+  }
+} else {
+  toast.error(response.data.message);
+}
+
+        
       } catch (err) {//iff the somthing wrong hapend
         toast.error(err.response?.data?.message || "Something went wrong");
       }

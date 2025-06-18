@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { overwriteCartToBackend} from '../redux/thunks/overwriteCartToBackend';
 
 import { useDispatch } from "react-redux";
 import { loginSuccess } from '../redux/Slices/userSlice.js';  // ✅ correct
@@ -68,18 +69,24 @@ try{
 }
 );
 
-if(response.data.success){
-  // this means the user login is done
+if (response.data.success) {
+  localStorage.setItem("token", response.data.token);
+  const user = response.data.payload;
 
+  try {
+    // 1️⃣ First, merge guest cart with backend cart
+    await dispatch(overwriteCartToBackend());
 
-localStorage.setItem("token",response.data.token);
-  // setIsLoggedIn(true); //X
-   const user = response.data.payload; // user info
+    // 2️⃣ Set user in Redux (now login state is true)
+    dispatch(loginSuccess(user));
 
-    dispatch(loginSuccess(user));  // Save user info in Redux store
-  toast.success(response.data.message);
-  navigate("/")
-}else{
+    // 3️⃣ Now that cart is merged, show success
+    toast.success(response.data.message);
+    navigate("/");
+  } catch (error) {
+    toast.error("Login succeeded but cart sync failed.");
+  }
+} else {
   toast.error(response.data.message);
 }
 
