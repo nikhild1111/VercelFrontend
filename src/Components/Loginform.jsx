@@ -72,6 +72,8 @@ try{
 if (response.data.success) {
   localStorage.setItem("token", response.data.token);
   const user = response.data.payload;
+console.log(user);
+
 
   try {
     // 1️⃣ First, merge guest cart with backend cart

@@ -5,6 +5,8 @@ const initialState = {
   isLoggedIn: false,
 };
 
+
+
 const userSlice = createSlice({
   name: 'user',
   initialState,

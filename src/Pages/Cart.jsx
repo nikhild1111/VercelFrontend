@@ -103,7 +103,9 @@ const Cart = () => {
   const [pruductcount,setproductcount]=useState(1);
   const [showProductModal, setShowProductModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [selectedAddress, setSelectedAddress] = useState("");
+  const [shippingAddressid, setSelectedAddressid] = useState("");
+
+
 const [addresses, setAddresses] = useState([]); // Replace savedAddresses
   const [loading, setLoading] = useState(false);
   
@@ -126,9 +128,58 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
     }
   };
 
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+//   Why Load Razorpay Script Dynamically?
+// 🧾 What Is the Razorpay Script?
+// Razorpay gives a JavaScript file:
+// https://checkout.razorpay.com/v1/checkout.js
+
+// This file:
+
+// Initializes their payment gateway
+
+// Opens the payment popup/modal
+
+// Manages payment options, callbacks, etc.
+
+// You need this script before you can call new Razorpay({...}).
+// 1. Avoid Loading It on Every Page
+// If you load it in public/index.html:
+{/* <script src="https://checkout.razorpay.com/v1/checkout.js"></script> */}
+// Then this script will be loaded:
+
+// Even on pages where user is not doing payment
+
+// On first load, slowing down your app
+
+// Even for users who might never reach checkout
+// ⚠️ That’s bad for performance and user experience.
+
+// ✅ So instead, load it only when needed:
+
   useEffect(() => {
     fetchAddresses();
+    loadRazorpayScript();
   }, []);
+
+
+  useEffect(() => {
+  const updated = cartItems.find(item => item._id === selectedProduct?._id);
+  if (updated) {
+    setSelectedProduct(updated);
+  }
+}, [cartItems]);
+
   
 //   This code snippet defines a state variable called discounts, which holds a random discount value for each product in the cart.
 // Let's break it down:
@@ -153,6 +204,7 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
 //   "64a6d3cf4dca1b0012f3eaf1": 12
 // }
 
+console.log(cartItems);
 
   // Discount state for each product
   const [discounts] = useState(
@@ -180,6 +232,8 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
   const totalSavings = originalAmount - totalAmount;
   const shipping = totalAmount > 500 ? 0 : 5.9;
 
+  const subtotal=totalAmount+shipping;
+
   // Handlers
   const handleRemove = (id) => {
     dispatch(remove(id));
@@ -188,17 +242,169 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
 
 
 
-  const handleCheckout = () => {
-    if (!selectedAddress) {
-      toast.error("Please select a delivery address");
-      return;
+const handleCheckout = async () => {
+
+
+ const shippingAddress=addresses.find(addr => addr._id === shippingAddressid);
+
+ console.log(shippingAddress);
+
+  if (!shippingAddress || !shippingAddress.name || !shippingAddress.phone) {
+    return toast.error("Please fill in the delivery address.");
+  }
+
+  if (cartItems.length === 0) {
+    return toast.error("Your cart is empty.");
+  }
+
+  setLoading(true);
+
+  try {
+    // Step 1: Create Razorpay order from backend
+    const { data } = await axios.post( `${process.env.REACT_APP_BACKEND_URL}/api/orders/create-razorpay-order`,
+      
+      
+      {
+      totalAmount:subtotal
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }
+    });
+
+    const { razorpayOrder, paymentGroupId } = data;
+
+    // Step 2: Open Razorpay payment popup
+    const options = {
+      key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      name: "My E-Commerce Store",
+      description: "Order Payment",
+      order_id: razorpayOrder.id,
+      handler: async function (response) {
+        await handlePaymentSuccess(response, paymentGroupId);
+      },
+      prefill: {
+        name: shippingAddress.fullName,
+        contact: shippingAddress.phone,
+        email: user.email || '', // Optional
+      },
+   theme: {
+    color: "#3399cc",
+    hide_topbar: false,  // Optional: hides Razorpay topbar
+  },
+      modal: {
+        ondismiss: function () {
+          handlePaymentFailure(paymentGroupId, "User closed Razorpay popup.");
+        }
+      }
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+
+  } catch (err) {
+    console.error("Error during checkout:", err);
+    toast.error("Checkout failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handlePaymentSuccess = async (response, paymentGroupId) => {
+ setLoading(true);
+ const shippingAddress=addresses.find(addr => addr._id === shippingAddressid);
+
+  try {
+    // 1. Verify the Razorpay payment on backend
+    const verify = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/orders/verify-payment`, {
+      razorpay_order_id: response.razorpay_order_id,
+      razorpay_payment_id: response.razorpay_payment_id,
+      razorpay_signature: response.razorpay_signature,
+      paymentGroupId
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+
+    if (verify.data.success) {
+      const { method, email, contact } = verify.data;
+
+      // 2. Create confirmed orders in backend
+   const data=   await axios.post( `${process.env.REACT_APP_BACKEND_URL}/api/orders/confirm-order`, {
+        cartItems,
+        shippingAddress,
+        totalAmount:subtotal,
+        shipping,
+        paymentInfo: {
+          paymentId: response.razorpay_payment_id,
+          orderId: response.razorpay_order_id,
+          signature: response.razorpay_signature,
+          paymentGroupId,
+          method: method || "UPI", // fallback if method is missing
+          status: "paid"
+        }
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      // 3. Clear cart and redirect
+      console.log(data);
+      // localStorage.removeItem("cartItems"); // or dispatch(clearCart())
+        try {
+    const response = await axios.delete('http://localhost:4000/api/cart/clear', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`, // if using JWT auth
+      },
+    });
+
+    if (response.status === 200) {
+     toast.success("Payment successful! Your order has been placed.");
+      dispatch(clearCart());
+      navigate("/");
     }
-    
-    // Remove all items from cart
-    cartItems.forEach(item => dispatch(remove(item._id)));
-    toast.success("Order placed successfully!");
-    setShowOrderSummary(false);
-  };
+  } catch (error) {
+    console.error("Clear cart error:", error);
+    toast.error("Failed to clear cart");
+  }
+      
+    }
+
+  } catch (err) {
+    console.error("Error in payment success flow:", err);
+    toast.error("Payment verified, but order creation failed.");
+  } finally {
+   setLoading(false);
+  }
+};
+
+
+
+const handlePaymentFailure = async (paymentGroupId, error) => {
+  try {
+    await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/orders/payment-failure`, {
+      paymentGroupId,
+      error
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+
+    toast.error("Payment failed or cancelled.");
+  } catch (err) {
+    console.error("Failed to record payment failure:", err);
+  }
+};
+
+
+
+
+
 
   const openProductModal = (product) => {
     setSelectedProduct(product);
@@ -562,8 +768,11 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
         <p className="text-gray-500">Loading addresses...</p>
       ) : (
         <select
-          value={selectedAddress}
-          onChange={(e) => setSelectedAddress(e.target.value)}
+          value={shippingAddressid}
+          onChange={(e) =>{setSelectedAddressid(e.target.value);
+          }
+
+          }
           onClick={() => {
             if (addresses.length === 0) {
               navigate('/addresses');
@@ -668,8 +877,8 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
               Delivery Address
             </label>
             <select
-              value={selectedAddress}
-              onChange={(e) => setSelectedAddress(e.target.value)}
+              value={shippingAddressid}
+              onChange={(e) => setSelectedAddressid(e.target.value)}
               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select Address</option>
