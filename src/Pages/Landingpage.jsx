@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { setFilters, resetFilters } from "../redux/Slices/filtersSlice";
 import { fetchFilteredProducts } from "../redux/thunks/filterProductsThunk";
-import Footer from "../Components/Footer";
+
 
 const Landingpage = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
@@ -327,7 +327,7 @@ const Landingpage = () => {
         </div>
       </section>
 
-      <Footer />
+     
       
       {/* Custom CSS for hiding scrollbar */}
       <style jsx>{`

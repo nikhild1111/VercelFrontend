@@ -77,6 +77,8 @@ import { FaShoppingBag, FaMapMarkerAlt, FaTimes, FaEye } from "react-icons/fa";
 import { Plus, Edit, Trash2, MapPin, Phone, Building } from 'lucide-react';
 import { toast } from "react-hot-toast";
 import Modal from "react-modal";
+import PaymentStatusModal from '../Components/PaymentStatusModal';
+import { fetchFilteredOrders } from "../redux/thunks/fetchFilteredOrders";
 import { syncCartToBackend } from "../redux/thunks/cartThunks"; // your thunk
 import {
   remove,
@@ -104,6 +106,10 @@ const Cart = () => {
   const [showProductModal, setShowProductModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [shippingAddressid, setSelectedAddressid] = useState("");
+const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+const [confirmationMessage, setConfirmationMessage] = useState("Confirming your payment...");
+
+
 
 
 const [addresses, setAddresses] = useState([]); // Replace savedAddresses
@@ -247,9 +253,9 @@ const handleCheckout = async () => {
 
  const shippingAddress=addresses.find(addr => addr._id === shippingAddressid);
 
- console.log(shippingAddress);
+//  console.log(shippingAddress);
 
-  if (!shippingAddress || !shippingAddress.name || !shippingAddress.phone) {
+  if (!shippingAddress || !shippingAddress.fullName || !shippingAddress.phone) {
     return toast.error("Please fill in the delivery address.");
   }
 
@@ -314,6 +320,10 @@ const handleCheckout = async () => {
 
 const handlePaymentSuccess = async (response, paymentGroupId) => {
  setLoading(true);
+ setLoading(true);
+  setShowConfirmationModal(true);
+  setConfirmationMessage("Confirming your payment...");
+  setShowOrderSummary(false);
  const shippingAddress=addresses.find(addr => addr._id === shippingAddressid);
 
   try {
@@ -363,12 +373,19 @@ const handlePaymentSuccess = async (response, paymentGroupId) => {
     });
 
     if (response.status === 200) {
-     toast.success("Payment successful! Your order has been placed.");
-      dispatch(clearCart());
-      navigate("/");
+       setConfirmationMessage("✅ Payment successful! Redirecting to homepage...");
+    //  toast.success("Payment successful! Your order has been placed.");
+ dispatch(clearCart());
+  dispatch(fetchFilteredOrders());
+
+      setTimeout(() => {
+        setShowConfirmationModal(false);
+        navigate("/userpanel");
+      }, 2000);
     }
   } catch (error) {
-    console.error("Clear cart error:", error);
+        setConfirmationMessage("✅ Payment verified, but order creation failed.");
+      setShowConfirmationModal(false);
     toast.error("Failed to clear cart");
   }
       
@@ -376,7 +393,13 @@ const handlePaymentSuccess = async (response, paymentGroupId) => {
 
   } catch (err) {
     console.error("Error in payment success flow:", err);
-    toast.error("Payment verified, but order creation failed.");
+    // toast.error("Payment verified, but order creation failed.");
+
+    
+           setConfirmationMessage("✅ Payment verified, but order creation failed.");
+      setTimeout(() => {
+        setShowConfirmationModal(false);
+      }, 2000);
   } finally {
    setLoading(false);
   }
@@ -745,7 +768,7 @@ const handlePaymentFailure = async (paymentGroupId, error) => {
 
 
 
-
+<PaymentStatusModal message={confirmationMessage} isOpen={showConfirmationModal} />
 
 
           {/* Order Summary - Desktop Only */}

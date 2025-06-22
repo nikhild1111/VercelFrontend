@@ -149,7 +149,7 @@ import Product from '../Components/Product';
 import { setProducts } from '../redux/Slices/productSlice';
 import { fetchFilteredProducts } from "../redux/thunks/filterProductsThunk";
 import { updatePage } from "../redux/Slices/filtersSlice";
-import Footer from "../Components/Footer"; // adjust path as needed
+
 
 
 function useQuery() {
@@ -400,7 +400,7 @@ const Home = () => {
             </div>
           </div>
 
-       <Footer />
+       
         </>
       ) : (
         <div className='flex justify-center items-center min-h-[50vh]'>

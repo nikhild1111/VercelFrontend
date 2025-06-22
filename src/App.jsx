@@ -86,6 +86,9 @@ import { useEffect } from "react";
 import { loginSuccess } from './redux/Slices/userSlice';
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import Footer from "./Components/Footer"; // adjust path if needed
+import ScrollToTopButton from "./Components/ScrollToTopButton"; // adjust path if needed
+
 import { syncCartToBackend } from "./redux/thunks/cartThunks"; // your thunk
 
 const App = () => {
@@ -134,35 +137,38 @@ const location = useLocation(); // ✅ this is fine
     // ✅ Get last path or default to /
   const lastPath = localStorage.getItem("lastPath") || "/";
 
-  return (
-    <div>
-      {/* Optional fixed navbar */}
-      {/* <div className="bg-slate-900 fixed top-0 left-0 w-full z-50">
-        <Navbar />
-      </div> */}
+ return (
+  // <div className="min-h-screen flex flex-col bg-slate-900 text-white">
 
-
-
-
-
-
-
-      <div className="bg-slate-900">
+     <div>
+    {/* Navbar - always visible (or you can conditionally hide it too) */}
+     <div className="bg-slate-900">
         <Navbar />
       </div>
 
+    {/* Page content - grows to push footer down */}
+    <main className="flex-grow">
       <Routes>
         <Route path="/" element={<Landingpage />} />
         <Route path="/home" element={<Home />} />
-         <Route path="/addresses" element={<AddressManagement />} />
-         <Route path="/userpanel" element={<UserPanel />} />
+        <Route path="/addresses" element={<AddressManagement />} />
+        <Route path="/userpanel" element={<UserPanel />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
-    </div>
-  );
+    </main>
+
+    {/* Conditionally show footer */}
+    {!["/login", "/signup", "/admin"].includes(location.pathname) && <Footer />}
+
+
+      {/* Always-visible Scroll Button */}
+    <ScrollToTopButton />
+
+  </div>
+);
 };
 
 export default App;
