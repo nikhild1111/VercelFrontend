@@ -206,6 +206,8 @@ import axios from "axios";
  import Pagination from '../Pagination'; 
 import ConfirmModal from "../ConfirmModal";
 import { updatePage } from "../../redux/Slices/filtersSlice";
+import FilterSidebar from "../FilterSidebar"; // Adjust the path as per your project
+
 
 const AdminProductPanel = () => {
   const dispatch = useDispatch();
@@ -664,7 +666,7 @@ const [isDeleting, setIsDeleting] = useState(false);
         </div>
       </div>
 
-      {/* Filters - Always visible on large screens, toggleable on mobile */}
+      {/* Filters - Always visible on large screens, toggleable on mobile
       <div className="hidden lg:block">
         {renderFilters()}
       </div>
@@ -672,7 +674,19 @@ const [isDeleting, setIsDeleting] = useState(false);
         <div className="lg:hidden">
           {renderFilters()}
         </div>
-      )}
+      )} */}
+
+        {/* Filters - Always visible on large screens */}
+    <div className="hidden lg:block">
+      <FilterSidebar />
+    </div>
+
+    {/* Toggle Filters on mobile */}
+    {showFilters && (
+      <div className="lg:hidden">
+        <FilterSidebar />
+      </div>
+    )}
 
       {/* Products Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
