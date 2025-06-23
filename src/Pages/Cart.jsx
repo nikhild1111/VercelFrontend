@@ -386,7 +386,7 @@ const handlePaymentSuccess = async (response, paymentGroupId) => {
 
       // localStorage.removeItem("cartItems"); // or dispatch(clearCart())
         try {
-    const response2 = await axios.delete('http://localhost:4000/api/cart/clear', {
+    const response2 = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/cart/clear`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`, // if using JWT auth
       },

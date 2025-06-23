@@ -621,16 +621,17 @@ const Navbar = () => {
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  
   const [showProfile, setShowProfile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 const [showFilterModal, setShowFilterModal] = useState(false);
-  const [priceRange, setPriceRange] = useState(5000);
+  const [priceRange, setPriceRange] = useState(10);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedRating, setSelectedRating] = useState(false);
-
+const [minDiscount, setMinDiscount] = useState("");
   const profileRef = useRef(null);
   const menuRef = useRef(null);
   const mobileMenuRef = useRef(null);
@@ -743,17 +744,32 @@ navigate('/home');
     );
   };
 
-  const applyFilters = () => {
-    // Apply filter logic here
-    toast.success("Filters applied successfully!");
-    setShowFilterModal(false);
-  };
+const applyFilters = () => {
+  dispatch(setFilters({
+    priceRange: parseInt(priceRange), // slider value
+    type: selectedCategory || null,   // category from dropdown
+    // brands: selectedBrands.length > 0 ? selectedBrands : null, // checkbox list
+    minDiscount: minDiscount ? parseInt(minDiscount) : null,   // discount input
+  }));
+
+  dispatch(fetchFilteredProducts()); // ✅ Trigger fetch with new filters
+
+  toast.success("Filters applied successfully!");
+  setShowFilterModal(false);
+};
 
   const resetFilters2 = () => {
+  setPriceRange(1000);
+  setSelectedCategory("");
+  setSelectedBrands([]);
+  setMinDiscount("");
+
     
   dispatch(resetFilters()); // Resets to default
-    toast.success("Filters reset successfully!");
-
+   setShowFilterModal(false);
+  toast.success("Filters reset successfully!");
+      dispatch(fetchFilteredProducts());
+       
   };
 
   const handleHomePage = async () => {
@@ -982,6 +998,7 @@ navigate('/home');
         )}
       </button>
     </div>
+
       {/* Right side - Filter + More buttons */}
       <div className="flex space-x-2 ml-4 relative items-center">
       {/* Filter Button */}
@@ -997,138 +1014,109 @@ navigate('/home');
   <span className="hidden lg:inline text-sm">Filter</span>
 </button>
 {showFilterModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div className="bg-white rounded-xl w-full max-w-md max-h-[80vh] overflow-y-auto shadow-xl">
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-2 sm:px-4">
+    <div className="bg-white rounded-xl w-full max-w-md sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
 
-      {/* Modal Header */}
-      <div className="bg-green-500 text-white p-4 rounded-t-xl flex justify-between items-center">
+      {/* Header */}
+      <div className="bg-black text-white p-4 rounded-t-xl flex justify-between items-center">
         <h3 className="text-lg font-semibold">Filter Products</h3>
-        <button onClick={() => setShowFilterModal(false)}>
-          <X size={24} />
+        <button onClick={() => setShowFilterModal(false)} className="hover:text-gray-200">
+          <X size={22} />
         </button>
       </div>
 
-      {/* Modal Content */}
-      <div className="p-6 space-y-6">
+      {/* Content */}
+      <div className="p-5 space-y-6">
 
         {/* Price Range */}
-        <div className="space-y-3">
-          <label className="text-gray-700 font-semibold text-lg">Price Range</label>
-          <div className="space-y-2">
-            <input 
-              type="range" 
-              min="0" 
-              max="10000" 
-              value={priceRange}
-              onChange={(e) => setPriceRange(e.target.value)}
-              className="w-full h-2 bg-green-200 rounded-lg appearance-none cursor-pointer slider"
-            />
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>₹0</span>
-              <span className="font-semibold text-green-600">₹{priceRange}</span>
-              <span>₹10000+</span>
-            </div>
+        <div>
+          <label className="text-sm font-semibold text-gray-700">Price Range</label>
+          <input
+            type="range"
+            min="0"
+            max="1000"
+            value={priceRange}
+            onChange={(e) => setPriceRange(e.target.value)}
+            className="w-full mt-2 appearance-none h-2 bg-green-200 rounded-lg cursor-pointer"
+          />
+          <div className="flex justify-between text-xs text-gray-600 mt-1">
+            <span>₹0</span>
+            <span className="font-semibold text-green-600">₹{priceRange}</span>
+            <span>₹1000+</span>
           </div>
         </div>
 
-        {/* Category Dropdown */}
-        <div className="space-y-3">
-          <label className="text-gray-700 font-semibold text-lg">Category</label>
-          <select 
+        {/* Category */}
+        <div>
+          <label className="text-sm font-semibold text-gray-700">Category</label>
+          <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+            className="w-full mt-2 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
           >
             <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.value} value={category.value}>
-                {category.name}
-              </option>
+            {categories.map((cat) => (
+              <option key={cat.value} value={cat.value}>{cat.name}</option>
             ))}
           </select>
         </div>
 
         {/* Brands */}
-        <div className="space-y-3">
-          <label className="text-gray-700 font-semibold text-lg">Brands</label>
-          <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+        <div>
+          <label className="text-sm font-semibold text-gray-700">Brands</label>
+          <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto mt-2">
             {brands.map((brand) => (
-              <label key={brand} className="flex items-center space-x-2 cursor-pointer p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                <input 
-                  type="checkbox" 
+              <label key={brand} className="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-50 p-2 rounded-lg transition">
+                <input
+                  type="checkbox"
                   checked={selectedBrands.includes(brand)}
                   onChange={() => handleBrandChange(brand)}
-                  className="rounded border-gray-300 text-green-500 focus:ring-green-500" 
+                  className="text-green-600 focus:ring-green-500"
                 />
-                <span className="text-gray-700 text-sm">{brand}</span>
+                {brand}
               </label>
             ))}
           </div>
         </div>
 
-        {/* Color & Size */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-gray-700 font-semibold">Color</label>
-            <select 
-              value={selectedColor}
-              onChange={(e) => setSelectedColor(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            > 
-              <option value="">Any Color</option>
-              {colors.map((color) => (
-                <option key={color} value={color}>{color}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-gray-700 font-semibold">Size</label>
-            <select 
-              value={selectedSize}
-              onChange={(e) => setSelectedSize(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            >
-              <option value="">Any Size</option>
-              {sizes.map((size) => (
-                <option key={size} value={size}>{size}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+        {/* Discount */}
+{/* Minimum Discount */}
+<div>
+  <label className="text-sm font-semibold text-gray-700">Minimum Discount</label>
+  <select
+    value={minDiscount}
+    onChange={(e) => setMinDiscount(e.target.value)}
+    className="w-full mt-2 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:ring-2 focus:ring-green-500 focus:outline-none"
+  >
+    <option value="">Any</option>
+    <option value="10">10% or more</option>
+    <option value="20">20% or more</option>
+    <option value="30">30% or more</option>
+    <option value="50">50% or more</option>
+  </select>
+</div>
 
-        {/* Rating Checkbox */}
-        <div className="space-y-2">
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input 
-              type="checkbox" 
-              checked={selectedRating}
-              onChange={(e) => setSelectedRating(e.target.checked)}
-              className="rounded border-gray-300 text-green-500 focus:ring-green-500" 
-            />
-            <span className="text-gray-700 font-medium">4★ & Up Only</span>
-          </label>
-        </div>
       </div>
 
-      {/* Modal Footer */}
-      <div className="bg-gray-50 px-6 py-4 rounded-b-xl flex space-x-3">
+      {/* Footer */}
+      <div className="bg-gray-100 px-5 py-4 flex gap-3 rounded-b-xl border-t border-gray-200">
         <button
           onClick={resetFilters2}
-          className="flex-1 py-3 text-gray-600 font-medium hover:bg-gray-200 rounded-lg transition-colors border border-gray-300"
+          className="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition"
         >
           Reset
         </button>
         <button
           onClick={applyFilters}
-          className="flex-1 py-3 bg-green-500 text-white font-medium hover:bg-green-600 rounded-lg transition-colors"
+          className="flex-1 py-2 bg-gray-900 text-white rounded-lg hover:bg-green-700 transition"
         >
           Apply Filters
         </button>
       </div>
-
     </div>
   </div>
 )}
+
         {/* More Button */}
         <div ref={menuRef} className="relative">
           <button

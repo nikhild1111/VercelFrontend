@@ -242,7 +242,7 @@ const [isDeleting, setIsDeleting] = useState(false);
   const [localFilters, setLocalFilters] = useState({
     keyword: '',
     type: '',
-    priceRange: 100000,
+    priceRange: 1000,
     brands: [],
     sortBy: 'createdAt',
     sortOrder: 'desc',
@@ -309,7 +309,7 @@ const [isDeleting, setIsDeleting] = useState(false);
     const resetState = {
       keyword: '',
       type: '',
-      priceRange: 10000,
+      priceRange: 1000,
       brands: [],
       sortBy: 'createdAt',
       sortOrder: 'desc',
@@ -356,176 +356,290 @@ const [isDeleting, setIsDeleting] = useState(false);
     return text && text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
 
+
   const renderFilters = () => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Filter Products</h3>
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="text-gray-500 hover:text-gray-700 lg:hidden"
-        >
-          <X className="w-5 h-5" />
-        </button>
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {/* Search */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={localFilters.keyword}
-              onChange={(e) => setLocalFilters({ ...localFilters, keyword: e.target.value })}
-              className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-        </div>
+  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+    <div className="flex items-center justify-between mb-4">
+      <h3 className="text-lg font-semibold">Filter Products</h3>
+      <button
+        onClick={() => setShowFilters(!showFilters)}
+        className="text-gray-500 hover:text-gray-700 lg:hidden"
+      >
+        <X className="w-5 h-5" />
+      </button>
+    </div>
 
-        {/* Category */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-          <select
-            value={localFilters.type}
-            onChange={(e) => setLocalFilters({ ...localFilters, type: e.target.value, brands: [] })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">All Categories</option>
-            {productTypes.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Price Range */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Max Price: ₹{localFilters.priceRange}
-          </label>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {/* 🔍 Search */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
-            type="range"
-            min="0"
-            max="100000"
-            step="1000"
-            value={localFilters.priceRange}
-            onChange={(e) => setLocalFilters({ ...localFilters, priceRange: parseInt(e.target.value) })}
-            className="w-full"
-          />
-        </div>
-
-        {/* Sort By */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
-          <select
-            value={localFilters.sortBy}
-            onChange={(e) => setLocalFilters({ ...localFilters, sortBy: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="createdAt">Date Created</option>
-            <option value="price">Price</option>
-            <option value="title">Name</option>
-            <option value="rating">Rating</option>
-          </select>
-        </div>
-
-        {/* Sort Order */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
-          <select
-            value={localFilters.sortOrder}
-            onChange={(e) => setLocalFilters({ ...localFilters, sortOrder: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="desc">Descending</option>
-            <option value="asc">Ascending</option>
-          </select>
-        </div>
-
-        {/* Stock Status */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Stock Status</label>
-          <select
-            value={localFilters.inStock}
-            onChange={(e) => setLocalFilters({ ...localFilters, inStock: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">All Products</option>
-            <option value="true">In Stock</option>
-            <option value="false">Out of Stock</option>
-          </select>
-        </div>
-
-        {/* Min Rating */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Min Rating</label>
-          <select
-            value={localFilters.minRating}
-            onChange={(e) => setLocalFilters({ ...localFilters, minRating: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Any Rating</option>
-            <option value="1">1+ Stars</option>
-            <option value="2">2+ Stars</option>
-            <option value="3">3+ Stars</option>
-            <option value="4">4+ Stars</option>
-            <option value="5">5 Stars</option>
-          </select>
-        </div>
-
-        {/* Min Discount */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Min Discount (%)</label>
-          <input
-            type="number"
-            placeholder="e.g., 10"
-            min="0"
-            max="100"
-            value={localFilters.minDiscount}
-            onChange={(e) => setLocalFilters({ ...localFilters, minDiscount: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            type="text"
+            placeholder="Search products..."
+            value={localFilters.keyword}
+            onChange={(e) => setLocalFilters({ ...localFilters, keyword: e.target.value })}
+            className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
       </div>
 
-      {/* Brands */}
-      {localFilters.type && brandOptionsMap[localFilters.type] && (
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Brands</label>
-          <div className="flex flex-wrap gap-2">
-            {brandOptionsMap[localFilters.type].map(brand => (
-              <label key={brand} className="flex items-center bg-gray-50 px-3 py-1 rounded-lg">
-                <input
-                  type="checkbox"
-                  checked={localFilters.brands.includes(brand)}
-                  onChange={() => handleBrandChange(brand)}
-                  className="mr-2"
-                />
-                <span className="text-sm">{brand}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* 📂 Category */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <select
+          value={localFilters.type}
+          onChange={(e) => setLocalFilters({ ...localFilters, type: e.target.value, brands: [] })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">All Categories</option>
+          {productTypes.map(category => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
+      </div>
 
-      {/* Filter Actions */}
-      <div className="flex flex-wrap gap-3 mt-6">
-        <button
-          onClick={handleFilter}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Apply Filters
-        </button>
-        <button
-          onClick={handleResetFilters}
-          className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-        >
-          Reset Filters
-        </button>
+      {/* 💰 Max Price */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Max Price: ₹{localFilters.priceRange}
+        </label>
+        <input
+          type="range"
+          min="0"
+          max="1000"
+          step="100"
+          value={localFilters.priceRange}
+          onChange={(e) => setLocalFilters({ ...localFilters, priceRange: parseInt(e.target.value) })}
+          className="w-full"
+        />
+      </div>
+
+      {/* 🏷️ Min Discount */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Min Discount (%)</label>
+        <input
+          type="number"
+          placeholder="e.g., 10"
+          min="0"
+          max="100"
+          value={localFilters.minDiscount}
+          onChange={(e) => setLocalFilters({ ...localFilters, minDiscount: e.target.value })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
       </div>
     </div>
-  );
+
+    {/* ✅ Only show brands if category is selected */}
+    {localFilters.type && brandOptionsMap[localFilters.type] && (
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Brands</label>
+        <div className="flex flex-wrap gap-2">
+          {brandOptionsMap[localFilters.type].map(brand => (
+            <label key={brand} className="flex items-center bg-gray-50 px-3 py-1 rounded-lg">
+              <input
+                type="checkbox"
+                checked={localFilters.brands.includes(brand)}
+                onChange={() => handleBrandChange(brand)}
+                className="mr-2"
+              />
+              <span className="text-sm">{brand}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* ✅ Filter Actions */}
+    <div className="flex flex-wrap gap-3 mt-6">
+      <button
+        onClick={handleFilter}
+        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      >
+        Apply Filters
+      </button>
+      <button
+        onClick={handleResetFilters}
+        className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+      >
+        Reset Filters
+      </button>
+    </div>
+  </div>
+);
+
+
+  // const renderFilters = () => (
+  //   <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+  //     <div className="flex items-center justify-between mb-4">
+  //       <h3 className="text-lg font-semibold">Filter Products</h3>
+  //       <button
+  //         onClick={() => setShowFilters(!showFilters)}
+  //         className="text-gray-500 hover:text-gray-700 lg:hidden"
+  //       >
+  //         <X className="w-5 h-5" />
+  //       </button>
+  //     </div>
+      
+  //     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  //       {/* Search */}
+  //       <div>
+  //         <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+  //         <div className="relative">
+  //           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+  //           <input
+  //             type="text"
+  //             placeholder="Search products..."
+  //             value={localFilters.keyword}
+  //             onChange={(e) => setLocalFilters({ ...localFilters, keyword: e.target.value })}
+  //             className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  //           />
+  //         </div>
+  //       </div>
+
+  //       {/* Category */}
+  //       <div>
+  //         <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+  //         <select
+  //           value={localFilters.type}
+  //           onChange={(e) => setLocalFilters({ ...localFilters, type: e.target.value, brands: [] })}
+  //           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  //         >
+  //           <option value="">All Categories</option>
+  //           {productTypes.map(category => (
+  //             <option key={category} value={category}>{category}</option>
+  //           ))}
+  //         </select>
+  //       </div>
+
+  //       {/* Price Range */}
+  //       <div>
+  //         <label className="block text-sm font-medium text-gray-700 mb-1">
+  //           Max Price: ₹{localFilters.priceRange}
+  //         </label>
+  //         <input
+  //           type="range"
+  //           min="0"
+  //           max="100000"
+  //           step="1000"
+  //           value={localFilters.priceRange}
+  //           onChange={(e) => setLocalFilters({ ...localFilters, priceRange: parseInt(e.target.value) })}
+  //           className="w-full"
+  //         />
+  //       </div>
+
+  //       {/* Sort By */}
+  //       <div>
+  //         <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+  //         <select
+  //           value={localFilters.sortBy}
+  //           onChange={(e) => setLocalFilters({ ...localFilters, sortBy: e.target.value })}
+  //           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  //         >
+  //           <option value="createdAt">Date Created</option>
+  //           <option value="price">Price</option>
+  //           <option value="title">Name</option>
+  //           <option value="rating">Rating</option>
+  //         </select>
+  //       </div>
+
+  //       {/* Sort Order */}
+  //       <div>
+  //         <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
+  //         <select
+  //           value={localFilters.sortOrder}
+  //           onChange={(e) => setLocalFilters({ ...localFilters, sortOrder: e.target.value })}
+  //           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  //         >
+  //           <option value="desc">Descending</option>
+  //           <option value="asc">Ascending</option>
+  //         </select>
+  //       </div>
+
+  //       {/* Stock Status */}
+  //       <div>
+  //         <label className="block text-sm font-medium text-gray-700 mb-1">Stock Status</label>
+  //         <select
+  //           value={localFilters.inStock}
+  //           onChange={(e) => setLocalFilters({ ...localFilters, inStock: e.target.value })}
+  //           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  //         >
+  //           <option value="">All Products</option>
+  //           <option value="true">In Stock</option>
+  //           <option value="false">Out of Stock</option>
+  //         </select>
+  //       </div>
+
+  //       {/* Min Rating */}
+  //       <div>
+  //         <label className="block text-sm font-medium text-gray-700 mb-1">Min Rating</label>
+  //         <select
+  //           value={localFilters.minRating}
+  //           onChange={(e) => setLocalFilters({ ...localFilters, minRating: e.target.value })}
+  //           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  //         >
+  //           <option value="">Any Rating</option>
+  //           <option value="1">1+ Stars</option>
+  //           <option value="2">2+ Stars</option>
+  //           <option value="3">3+ Stars</option>
+  //           <option value="4">4+ Stars</option>
+  //           <option value="5">5 Stars</option>
+  //         </select>
+  //       </div>
+
+  //       {/* Min Discount */}
+  //       <div>
+  //         <label className="block text-sm font-medium text-gray-700 mb-1">Min Discount (%)</label>
+  //         <input
+  //           type="number"
+  //           placeholder="e.g., 10"
+  //           min="0"
+  //           max="100"
+  //           value={localFilters.minDiscount}
+  //           onChange={(e) => setLocalFilters({ ...localFilters, minDiscount: e.target.value })}
+  //           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  //         />
+  //       </div>
+  //     </div>
+
+  //     {/* Brands */}
+  //     {localFilters.type && brandOptionsMap[localFilters.type] && (
+  //       <div className="mt-4">
+  //         <label className="block text-sm font-medium text-gray-700 mb-2">Brands</label>
+  //         <div className="flex flex-wrap gap-2">
+  //           {brandOptionsMap[localFilters.type].map(brand => (
+  //             <label key={brand} className="flex items-center bg-gray-50 px-3 py-1 rounded-lg">
+  //               <input
+  //                 type="checkbox"
+  //                 checked={localFilters.brands.includes(brand)}
+  //                 onChange={() => handleBrandChange(brand)}
+  //                 className="mr-2"
+  //               />
+  //               <span className="text-sm">{brand}</span>
+  //             </label>
+  //           ))}
+  //         </div>
+  //       </div>
+  //     )}
+
+  //     {/* Filter Actions */}
+  //     <div className="flex flex-wrap gap-3 mt-6">
+  //       <button
+  //         onClick={handleFilter}
+  //         className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+  //       >
+  //         Apply Filters
+  //       </button>
+  //       <button
+  //         onClick={handleResetFilters}
+  //         className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+  //       >
+  //         Reset Filters
+  //       </button>
+  //     </div>
+  //   </div>
+  // );
 
   return (
     <div className="space-y-6 p-4 lg:p-6">

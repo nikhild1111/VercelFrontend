@@ -40,7 +40,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   keyword: null,
   type: null,
-  priceRange: 100000,      // ✅ Always present
+  priceRange: 1000,      // ✅ Always present
   brands: null,
   page: 1,
   totalPages: 1,
