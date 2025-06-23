@@ -34,10 +34,15 @@ const productSlice = createSlice({
   name: 'products',
   initialState: {
     posts: [],
+    Totalproducts:0,
   },
   reducers: {
     setProducts(state, action) {
       state.posts = action.payload;
+    },
+    setTotalproduct(state,action){
+      state.Totalproducts=action.payload;
+
     },
     updateStock(state, action) {
 
@@ -52,5 +57,5 @@ const productSlice = createSlice({
   }
 });
 
-export const { setProducts, updateStock } = productSlice.actions;
+export const { setProducts, updateStock, setTotalproduct } = productSlice.actions;
 export default productSlice.reducer;

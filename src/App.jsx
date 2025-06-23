@@ -76,6 +76,7 @@ import Navbar from "./Components/Navbar";
 import Home from "./Pages/Home";
 import Cart from "./Pages/Cart";
 import Landingpage from "./Pages/Landingpage";
+import ForgotPassword from "./Pages/ForgotPassword";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Admin from "./Pages/Admin";
@@ -157,13 +158,18 @@ const location = useLocation(); // ✅ this is fine
         <Route path="/signup" element={<Signup />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
       </Routes>
     </main>
 
     {/* Conditionally show footer */}
-    {!["/login", "/signup", "/admin"].includes(location.pathname) && <Footer />}
+
+    <div>
 
 
+    </div>
+     {!["/Login", "/forgot-password", "/Admin","/userpanel" ,"/Signup"].includes(location.pathname) && <Footer />}
       {/* Always-visible Scroll Button */}
     <ScrollToTopButton />
 

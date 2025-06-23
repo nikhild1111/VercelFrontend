@@ -16,8 +16,8 @@
 // After placing an order, if you call that same fetchFilteredProducts() again (just like on mount), it will refetch the latest product data from your backend — including updated stock quantities.
 
 import axios from "axios";
-import { setProducts } from "../Slices/productSlice"; // you already have this
-import { setTotalPages } from "../Slices/filtersSlice";
+import { setProducts,setTotalproduct } from "../Slices/productSlice"; // you already have this
+import { setTotalPages  } from "../Slices/filtersSlice";
 
 export const fetchFilteredProducts = () => async (dispatch, getState) => {
   const filters = getState().filters;
@@ -25,8 +25,9 @@ export const fetchFilteredProducts = () => async (dispatch, getState) => {
 
   try {
     const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/products/search`, filters);
-    console.log(res.data.data);
+    console.log(res.data.Totalprodcuts);
     dispatch(setProducts(res.data.data));
+    dispatch(setTotalproduct(res.data.Totalprodcuts));
      dispatch(setTotalPages(res.data.totalPages)); // ✅ Update totalPages in Redux
   } catch (err) {
     console.error("Error while filtering:", err);

@@ -589,6 +589,7 @@
 //clude 3
 
 import React, { useState, useRef, useEffect } from 'react';
+import { PackageSearch } from "lucide-react";
 import './Navbar.css'; // 👈 Importing the CSS file
 import { Link } from 'react-router-dom';
 import { FaShoppingCart } from "react-icons/fa";
@@ -824,26 +825,25 @@ navigate('/home');
 </div> */}
 
 
-<div
-  className={`${
-    !isLogin ? 'hidden sm:flex' : 'flex'
-  } items-center bg-white rounded-lg overflow-hidden shadow-sm flex-1 mx-2  md:mx-6 lg:mx-8 max-w-full sm:max-w-xl lg:max-w-2xl h-[35px]`}
->
-  <input
-    type="text"
-    placeholder="Search products..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-    className="flex-grow px-2 py-2 sm:px-4 sm:py-3 text-black text-sm sm:text-base outline-none bg-transparent search-input-mobile"
-  />
+<div className="flex items-center bg-white rounded-lg overflow-hidden shadow-sm flex-1 mx-2 md:mx-6 lg:mx-8 max-w-full sm:max-w-xl lg:max-w-2xl h-[40px] border border-gray-300">
+  <div className="flex-grow min-w-0">
+    <input
+      type="text"
+      placeholder="Search products..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+      className="w-full px-2 sm:px-4 text-black text-sm sm:text-base outline-none bg-transparent truncate placeholder:text-gray-400"
+    />
+  </div>
   <button
     onClick={handleSearch}
-    className="bg-orange-400 rounded-md px-4 py-4 text-white hover:bg-orange-500 transition-colors duration-200 flex items-center justify-center search-button-mobile"
+    className="bg-orange-400 h-full px-3 sm:px-4 flex items-center justify-center text-white hover:bg-gray-900 transition"
   >
     <Search size={18} />
   </button>
 </div>
+
 
 
 
@@ -887,13 +887,15 @@ navigate('/home');
         Login
       </button>
     </Link>
-    <Link to="/Signup">
+    {/* <Link to="/Signup">
       <button className='bg-richblack-800 py-2 px-4 rounded-lg border border-richblack-700 hover:bg-green-600 hover:border-green-700 transition-all duration-200'>
         Signup
       </button>
-    </Link>
+    </Link> */}
   </>
 )}
+
+
           {/* Logged in user controls */}
           {isLogin && (
             <>
@@ -947,35 +949,39 @@ navigate('/home');
 </div>
 
    {/* LEFT SIDE: Home & Cart (visible only on small screens) */}
-      <div className="flex xl:hidden items-center space-x-3">
-        {/* Home Button for small screens */}
-        <button
-          onClick={handleHomePage}
-          className="bg-richblack-800 py-2 px-3 rounded-lg border border-richblack-700 hover:bg-richblack-700 transition-colors"
-        >
-          <Home size={20} />
-        </button>
+   <div className="flex xl:hidden items-center space-x-2 sm:space-x-3">
+      {/* Home Icon */}
+      <button
+        onClick={() => navigate("/")}
+        className="p-2 rounded-lg border border-richblack-700 bg-richblack-800 hover:bg-richblack-700 transition"
+        title="Home"
+      >
+        <Home size={20} className="text-white" />
+      </button>
 
-        {/* Cart Button */}
-        <button
-  onClick={() => {
-    // if (isLogin) {
-      navigate("/cart");
-    // } else {
-      // toast.error("Please login first");
-    // }
-  }}
-  className="relative p-2 hover:bg-richblack-800 rounded-lg transition-colors"
->
-  <ShoppingCart size={24} />
-  {totalItems > 0 && (
-    <span className='absolute -top-1 -right-1 bg-red-500 text-xs w-4 h-4 flex justify-center items-center animate-bounce rounded-full text-white font-bold'>
-      {totalItems}
-    </span>
-  )}
-</button>
+      {/* Product Icon */}
+      <button
+        onClick={() => navigate("/home")}
+        className="p-2 rounded-lg border border-richblack-700 bg-richblack-800 hover:bg-richblack-700 transition"
+        title="Products"
+      >
+        <PackageSearch size={20} className="text-white" />
+      </button>
 
-      </div>
+      {/* Cart Icon */}
+      <button
+        onClick={() => navigate("/cart")}
+        className="relative p-2 rounded-lg border border-richblack-700 bg-richblack-800 hover:bg-richblack-700 transition"
+        title="Cart"
+      >
+        <ShoppingCart size={20} className="text-white" />
+        {totalItems > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center animate-pulse font-bold">
+            {totalItems}
+          </span>
+        )}
+      </button>
+    </div>
       {/* Right side - Filter + More buttons */}
       <div className="flex space-x-2 ml-4 relative items-center">
       {/* Filter Button */}

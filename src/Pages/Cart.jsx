@@ -77,9 +77,12 @@ import { FaShoppingBag, FaMapMarkerAlt, FaTimes, FaEye } from "react-icons/fa";
 import { Plus, Edit, Trash2, MapPin, Phone, Building } from 'lucide-react';
 import { toast } from "react-hot-toast";
 import Modal from "react-modal";
-import PaymentStatusModal from '../Components/PaymentStatusModal';
+import PaymentStatusModal from '../Components/StatusModalLoading';
 import { fetchFilteredOrders } from "../redux/thunks/fetchFilteredOrders";
 import { syncCartToBackend } from "../redux/thunks/cartThunks"; // your thunk
+
+import { updateUserStats } from "../redux/Slices/userSlice";
+
 import {
   remove,
   increaseCount,
@@ -322,7 +325,7 @@ const handlePaymentSuccess = async (response, paymentGroupId) => {
  setLoading(true);
  setLoading(true);
   setShowConfirmationModal(true);
-  setConfirmationMessage("Confirming your payment...");
+  setConfirmationMessage("Confirming your Order...");
   setShowOrderSummary(false);
  const shippingAddress=addresses.find(addr => addr._id === shippingAddressid);
 
@@ -343,7 +346,7 @@ const handlePaymentSuccess = async (response, paymentGroupId) => {
       const { method, email, contact } = verify.data;
 
       // 2. Create confirmed orders in backend
-   const data=   await axios.post( `${process.env.REACT_APP_BACKEND_URL}/api/orders/confirm-order`, {
+   const response1= await axios.post( `${process.env.REACT_APP_BACKEND_URL}/api/orders/confirm-order`, {
         cartItems,
         shippingAddress,
         totalAmount:subtotal,
@@ -362,18 +365,36 @@ const handlePaymentSuccess = async (response, paymentGroupId) => {
         }
       });
 
-      // 3. Clear cart and redirect
-      console.log(data);
+   
+    if (response1.data.success === true) {
+        setConfirmationMessage("✅ Order Confirm! Clearing cart...");
+ const {totalOrders,totalSpends}=response1.data;
+  dispatch(updateUserStats({
+ totalOrders, totalSpends,
+}));
+    }else{
+ setConfirmationMessage("X Order creation failed.");
+        setConfirmationMessage("X Order creation failed.");
+      setTimeout(() => {
+        setShowConfirmationModal(false);
+      }, 2000);
+
+      return ;//as no sucess then dont allow nest statement to excute 
+    }
+
+
+
       // localStorage.removeItem("cartItems"); // or dispatch(clearCart())
         try {
-    const response = await axios.delete('http://localhost:4000/api/cart/clear', {
+    const response2 = await axios.delete('http://localhost:4000/api/cart/clear', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`, // if using JWT auth
       },
     });
 
-    if (response.status === 200) {
-       setConfirmationMessage("✅ Payment successful! Redirecting to homepage...");
+    if (response2.data.success === true) {
+     
+       setConfirmationMessage("All Dome successfuly! Redirecting to userpanel...");
     //  toast.success("Payment successful! Your order has been placed.");
  dispatch(clearCart());
   dispatch(fetchFilteredOrders());
@@ -381,10 +402,16 @@ const handlePaymentSuccess = async (response, paymentGroupId) => {
       setTimeout(() => {
         setShowConfirmationModal(false);
         navigate("/userpanel");
-      }, 2000);
+      }, 4000);
+    }else{
+
+   setConfirmationMessage("X clear cart  failed.");
+ setTimeout(() => {
+        setShowConfirmationModal(false);
+      }, 4000);
     }
   } catch (error) {
-        setConfirmationMessage("✅ Payment verified, but order creation failed.");
+        setConfirmationMessage("X Failed to clear cart");
       setShowConfirmationModal(false);
     toast.error("Failed to clear cart");
   }
@@ -396,7 +423,7 @@ const handlePaymentSuccess = async (response, paymentGroupId) => {
     // toast.error("Payment verified, but order creation failed.");
 
     
-           setConfirmationMessage("✅ Payment verified, but order creation failed.");
+           setConfirmationMessage("Error in payment success flow:");
       setTimeout(() => {
         setShowConfirmationModal(false);
       }, 2000);

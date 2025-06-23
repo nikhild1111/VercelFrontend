@@ -33,13 +33,13 @@ import OrderDetailsModal from '../Admincoponents/OrderDetailsModal';
 import UserDetailsModal from '../Admincoponents/UserDetailsModal';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from 'react-hot-toast';
 
 import { updateOrderPage, setOrderFilters } from "../../redux/Slices/orderFiltersSlice";
 import adminfetchFilteredOrders from "../../redux/thunks/adminfetchFilteredOrders";
 import { fetchFilteredOrders } from "../../redux/thunks/fetchFilteredOrders";
-import PaymentStatusModal from "../PaymentStatusModal"; // Adjust path if needed
-
+import PaymentStatusModal from "../StatusModalLoading"; // Adjust path if needed
+import Pagination from '../Pagination'; 
 
 // import Footer from "../Footer";
 
@@ -187,6 +187,7 @@ const updateOrderStatus = async (orderId, newStatus, currentStatus) => {
 
     // 🌀 Show loading modal with message
     setLoadingMessage("Updating order status...");
+        setShowConfirmationModal(true);
 
     const res = await axios.put(
       `${process.env.REACT_APP_BACKEND_URL}/api/dashboard/admin/update-status/${orderId}`,
@@ -198,13 +199,28 @@ const updateOrderStatus = async (orderId, newStatus, currentStatus) => {
       }
     );
 
-    toast.success(res.data.message || "Status updated successfully.");
+    if(res.status==true){
+   toast.success(res.data.message || "Status updated successfully.");
    dispatch(adminfetchFilteredOrders());
     dispatch(fetchFilteredOrders());
             setLoadingMessage("Status updated successfully.");
        setTimeout(() => {
         setShowConfirmationModal(false);
-      }, 2000);
+      }, 4000);
+
+    }else{
+
+ toast.success(res.data.message || "Status Cannot updated.");
+   dispatch(adminfetchFilteredOrders());
+    dispatch(fetchFilteredOrders());
+            setLoadingMessage(res.data.message);
+       setTimeout(() => {
+        setShowConfirmationModal(false);
+      }, 4000);
+
+
+    }
+ 
   } catch (err) {
     const message = err.response?.data?.message || "Update failed. Please try again.";
         setLoadingMessage("Update failed. Please try again.");
@@ -213,8 +229,6 @@ const updateOrderStatus = async (orderId, newStatus, currentStatus) => {
       }, 2000);
     toast.error(message);
   } finally {
-    // ✅ Always hide modal
-    setLoadingMessage("Status updated successfully.");
       setTimeout(() => {
         setShowConfirmationModal(false);
       }, 2000);
@@ -307,6 +321,7 @@ const updateOrderStatus = async (orderId, newStatus, currentStatus) => {
                   <option value="pending">Pending</option>
                   <option value="confirmed">Confirmed</option>
                   <option value="cancelled">Cancelled</option>
+                  <option value="shipped">shipped</option>
                 </select>
               </div>
 
@@ -426,7 +441,7 @@ const updateOrderStatus = async (orderId, newStatus, currentStatus) => {
                   <option value="confirmed">Confirmed</option>
                   <option value="shipped">Shipped</option>
                   <option value="cancelled">Cancelled</option>
-                     <option value="shipped">shipped</option>
+                   <option value="shipped">shipped</option>
                 </select>
               </td>
             </tr>
@@ -562,6 +577,17 @@ const updateOrderStatus = async (orderId, newStatus, currentStatus) => {
         </div>
       </div> */}
 
+
+
+
+   <Pagination
+  page={page}
+  totalPages={totalPages}
+  onPageChange={(newPage) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    dispatch(updateOrderPage(newPage));
+  }}
+/>
 
 <UserDetailsModal
   isOpen={showUserModal}

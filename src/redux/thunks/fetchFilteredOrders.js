@@ -12,7 +12,7 @@ import {
   setPendingCount, // ✅ Import the new action
   setTotalCount, // ✅ Import the new action
 } from "../Slices/ordersSlice";
-import { setOrderTotalPages } from "../Slices/orderFiltersSlice";
+import { setOrderTotalPages, } from "../Slices/orderFiltersSlice";
 
 export const fetchFilteredOrders = () => async (dispatch, getState) => {
   try {

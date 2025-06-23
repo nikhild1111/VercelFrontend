@@ -4,7 +4,7 @@ import SignupForm from '../Components/SignupForm'
 const Signup = (props) => {
     let setIsLoggedIn=props.setIsLoggedIn;
   return (
-    <div>
+    <div className='border-gray-900'>
       <SignupForm setIsLoggedIn={setIsLoggedIn} ></SignupForm>
     </div>
   )

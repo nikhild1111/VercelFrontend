@@ -287,10 +287,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { Search, Eye, Users } from 'lucide-react';
 import UserDetailsModal from './UserDetailsModal';
+import Pagination from '../Pagination'
+
 
 const UserManagement = () => {
   const dispatch = useDispatch();
-  const { page, totalPages } = useSelector((state) => state.orderFilters);
+  const [page, setpage ] = useSelector(1);
+  const [totalPages, setTotalPages ] = useSelector(1);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
@@ -304,6 +307,8 @@ const UserManagement = () => {
         { withCredentials: true }
       );
       setUsers(data.users);
+      setTotalPages(data.totalPages);
+      setpage(1);
       // Optional: dispatch totalPages update
     } catch (err) {
       console.error('Failed to fetch users:', err);
@@ -408,6 +413,16 @@ const UserManagement = () => {
       </div>
 
  
+
+ 
+   <Pagination
+  page={page}
+  totalPages={totalPages}
+  onPageChange={(newPage) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    dispatch(setpage(newPage));
+  }}
+/>
 
       {/* Modal */}
       <UserDetailsModal
