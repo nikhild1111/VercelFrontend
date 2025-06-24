@@ -123,7 +123,7 @@ const Landingpage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Banner Section */}
-      <section className="relative h-[300px] sm:h-[400px] md:h-[500px] overflow-hidden">
+      <section className="relative h-[330px] sm:h-[420px] md:h-[500px] overflow-hidden">
         <div 
           className="flex transition-transform duration-700 ease-in-out h-full"
           style={{ transform: `translateX(-${currentBanner * 100}%)` }}
@@ -329,12 +329,12 @@ const Landingpage = () => {
 
      
       
-      {/* Custom CSS for hiding scrollbar */}
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
+<style>{`
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+`}</style>
+
     </div>
   );
 };
