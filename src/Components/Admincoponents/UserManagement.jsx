@@ -292,8 +292,8 @@ import Pagination from '../Pagination'
 
 const UserManagement = () => {
   const dispatch = useDispatch();
-  const [page, setpage ] = useSelector(1);
-  const [totalPages, setTotalPages ] = useSelector(1);
+  const [page, setpage ] =  useState(1);
+  const [totalPages, setTotalPages ] = useState(1);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
