@@ -210,6 +210,35 @@ import FilterSidebar from "../FilterSidebar"; // Adjust the path as per your pro
 
 
 const AdminProductPanel = () => {
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+const [isDeleting, setIsDeleting] = useState(false);
+  const [showconfirmModal, setShowconfirmModal] = useState(false);
+
+
+useEffect(() => {
+  if (showProductModal || showAddProductModal||showEditProductModal||showconfirmModal) {
+    document.body.style.overflow = 'hidden';   // 1️⃣
+  } else {
+    document.body.style.overflow = 'auto';     // 2️⃣
+  }
+
+  return () => {
+    document.body.style.overflow = 'auto';     // 3️⃣
+  };
+}, [showProductModal,showconfirmModal,showEditProductModal,showAddProductModal]); 
+
+
+  
+
+
+
+
+
   const dispatch = useDispatch();
   const { posts: products } = useSelector(state => state.products);
 
@@ -229,16 +258,7 @@ const AdminProductPanel = () => {
     minDiscount 
   } = useSelector(state => state.filters);
 
-  const [showProductModal, setShowProductModal] = useState(false);
-  const [showAddProductModal, setShowAddProductModal] = useState(false);
-  const [showEditProductModal, setShowEditProductModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-const [isDeleting, setIsDeleting] = useState(false);
 
- 
-  const [showconfirmModal, setShowconfirmModal] = useState(false);
 
   // Local filter states
   const [localFilters, setLocalFilters] = useState({
@@ -930,7 +950,7 @@ const [isDeleting, setIsDeleting] = useState(false);
         <img
           src={`${process.env.REACT_APP_BACKEND_URL}${selectedProduct.image}`}
           alt={selectedProduct.title}
-          className="w-44 h-44 object-cover rounded-xl border shadow"
+          className="w-44 h-44 object-contain rounded-xl border shadow"
         />
 
         {/* Title, Category, Brand */}
@@ -988,7 +1008,7 @@ const [isDeleting, setIsDeleting] = useState(false);
           }}
           className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
-          ✏️ Edit Product
+         Edit Product
         </button>
         <button
           onClick={() => {
@@ -998,7 +1018,7 @@ const [isDeleting, setIsDeleting] = useState(false);
           }}
           className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
         >
-          🗑️ Delete Product
+         Delete Product
         </button>
       </div>
     </div>

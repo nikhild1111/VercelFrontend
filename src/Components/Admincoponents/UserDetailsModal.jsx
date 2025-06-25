@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from './Modal'; // path to your reusable Modal
-
+import { useEffect } from 'react';
 const UserDetailsModal = ({
   isOpen,
   onClose,
@@ -8,6 +8,20 @@ const UserDetailsModal = ({
   handleViewOrders,
   handleSendMessage,
 }) => {
+
+
+
+  useEffect(() => {
+    if ( isOpen) {
+      document.body.style.overflow = 'hidden';   // 1️⃣
+    } else {
+      document.body.style.overflow = 'auto';     // 2️⃣
+    }
+  
+    return () => {
+      document.body.style.overflow = 'auto';     // 3️⃣
+    };
+  }, [ isOpen,]); 
   if (!selectedUser) return null;
 
   return (

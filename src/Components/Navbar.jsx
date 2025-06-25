@@ -1014,12 +1014,12 @@ const applyFilters = () => {
   <span className="hidden lg:inline text-sm">Filter</span>
 </button>
 {showFilterModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center px-2 sm:px-4">
+  <div className="fixed inset-0  bg-opacity-50 z-50 flex items-center justify-center px-2 sm:px-4">
     <div className="bg-white rounded-xl w-full max-w-md sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
 
       {/* Header */}
-      <div className="bg-black text-white p-4 rounded-t-xl flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Filter Products</h3>
+      <div className="text-black p-4 rounded-t-xl flex justify-between items-center">
+        <h3 className="text-lg font-bold">Filter Products</h3>
         <button onClick={() => setShowFilterModal(false)} className="hover:text-gray-200">
           <X size={22} />
         </button>
@@ -1052,7 +1052,7 @@ const applyFilters = () => {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full mt-2 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+            className="text-black  w-full mt-2 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (

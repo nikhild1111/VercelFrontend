@@ -1,10 +1,39 @@
 import Modal from './Modal';
 import { CreditCard, Truck } from 'lucide-react';
+import { useEffect } from 'react';
 
 const OrderDetailsModal = ({ showModal, selectedOrder, closeModal, formatDate, getStatusColor }) => {
-  if (!selectedOrder) return null;
+ 
 
-console.log(selectedOrder);
+  // 🔁 Common overflow values:
+// Value	What It Does
+// visible	(default) Content can overflow and still be visible
+// hidden	Content can overflow, but it won't scroll or show scrollbars
+// scroll	Always shows scrollbars, even if not needed
+// auto	Adds scrollbars only if content overflows
+
+
+// This means:
+
+// ❌ “Don't show scrollbars, and don’t let the user scroll.”
+
+// But the content is still there in the page — just not scrollable.
+
+useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = 'hidden';   // 1️⃣
+  } else {
+    document.body.style.overflow = 'auto';     // 2️⃣
+  }
+
+  return () => {
+    document.body.style.overflow = 'auto';     // 3️⃣
+  };
+}, [showModal]);                              // 4️⃣
+
+ if (!selectedOrder) return null;
+
+// console.log(selectedOrder);
 
   return (
     <Modal isOpen={showModal} onClose={closeModal} title="Order Details">
@@ -15,11 +44,15 @@ console.log(selectedOrder);
           alt={selectedOrder.productTitle}
           className="w-24 h-24 object-contain rounded-lg"
         />
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
-            {selectedOrder.productTitle}
-          </h3>
-          <p className="text-gray-600 mb-2">Order ID: {selectedOrder.id}</p>
+        <div className="flex-1 max-w-[175px]">
+ <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate w-full overflow-hidden whitespace-nowrap">
+  {selectedOrder.productTitle}
+</h3>
+
+<p className="text-gray-600 mb-2 truncate w-full overflow-hidden whitespace-nowrap">
+  Order ID: {selectedOrder.id}
+</p>
+
           <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(selectedOrder.status)}`}>
             {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
           </span>

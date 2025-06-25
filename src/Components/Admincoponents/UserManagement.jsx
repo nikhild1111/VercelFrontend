@@ -299,6 +299,19 @@ const UserManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
 
+  useEffect(() => {
+  if (showUserModal) {
+    document.body.style.overflow = 'hidden';   // 1️⃣
+  } else {
+    document.body.style.overflow = 'auto';     // 2️⃣
+  }
+
+  return () => {
+    document.body.style.overflow = 'auto';     // 3️⃣
+  };
+}, [showUserModal]);                              // 4️⃣
+
+
   const fetchUsers = async () => {
     try {
       const { data } = await axios.post(

@@ -100,10 +100,13 @@ const App = () => {
 // it is usefull to redirect tot he same page where we are standing even when the website reloads
 const location = useLocation(); // ✅ this is fine
   useEffect(() => {
+
+   window.scrollTo(0, 0);
     localStorage.setItem('lastPath', location.pathname);
   }, [location]);
   useEffect(() => {
       const lastPath = localStorage.getItem("lastPath") || "/";
+      
    navigate(lastPath);
   }, []);
 
@@ -141,7 +144,7 @@ const location = useLocation(); // ✅ this is fine
  return (
   // <div className="min-h-screen flex flex-col bg-slate-900 text-white">
 
-     <div>
+     <div className="min-h-screen overscroll-none touch-none">
     {/* Navbar - always visible (or you can conditionally hide it too) */}
      <div className="bg-slate-900">
         <Navbar />

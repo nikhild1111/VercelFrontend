@@ -24,6 +24,19 @@ const brandOptions = [
 
 const EditProduct = ({ setShowEditProductModal, selectedProduct }) => {
 
+
+  useEffect(() => {
+  if (selectedProduct) {
+    document.body.style.overflow = 'hidden';   // 1️⃣
+  } else {
+    document.body.style.overflow = 'auto';     // 2️⃣
+  }
+
+  return () => {
+    document.body.style.overflow = 'auto';     // 3️⃣
+  };
+}, [selectedProduct]); 
+
  const dispatch=useDispatch();
   const [formData, setFormData] = useState({
     title: '',

@@ -203,7 +203,7 @@
 
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { add, remove } from '../redux/Slices/CartSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -215,6 +215,21 @@ const Product = ({ post }) => {
   const cartItems = useSelector((state) => state.Cart.items); // ✅ Corrected from Cart
   const isLogin = useSelector((state) => state.user.isLoggedIn); // ✅ Clean access to isLoggedIn
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
+useEffect(()=>{
+if(modalIsOpen){
+  document.body.style.overflow='hidden';
+}else{
+   document.body.style.overflow='auto';
+
+}
+
+   return ()=>{
+        document.body.style.overflow='auto';
+   }
+
+},[modalIsOpen])
+
 
   Modal.setAppElement('#root');
 

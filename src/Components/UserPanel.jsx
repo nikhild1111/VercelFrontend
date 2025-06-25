@@ -237,7 +237,7 @@ const userProfile = {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Total Spent</p>
-                <h3 className="text-2xl font-bold text-gray-800"> {`${userinfo.totalSpends}`}</h3>
+                <h3 className="text-2xl font-bold text-gray-800"> {`$ ${userinfo.totalSpends.toFixed(2)}`}</h3>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <CreditCard className="text-green-600" size={24} />

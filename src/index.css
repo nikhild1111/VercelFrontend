@@ -37,3 +37,10 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+
+
+html, body {
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
