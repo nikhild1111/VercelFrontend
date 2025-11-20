@@ -152,28 +152,19 @@ const [addresses, setAddresses] = useState([]); // Replace savedAddresses
 // 🧾 What Is the Razorpay Script?
 // Razorpay gives a JavaScript file:
 // https://checkout.razorpay.com/v1/checkout.js
-
 // This file:
-
 // Initializes their payment gateway
-
 // Opens the payment popup/modal
-
 // Manages payment options, callbacks, etc.
-
 // You need this script before you can call new Razorpay({...}).
 // 1. Avoid Loading It on Every Page
 // If you load it in public/index.html:
 {/* <script src="https://checkout.razorpay.com/v1/checkout.js"></script> */}
 // Then this script will be loaded:
-
 // Even on pages where user is not doing payment
-
 // On first load, slowing down your app
-
 // Even for users who might never reach checkout
 // ⚠️ That’s bad for performance and user experience.
-
 // ✅ So instead, load it only when needed:
 
   useEffect(() => {
@@ -271,8 +262,6 @@ const handleCheckout = async () => {
   try {
     // Step 1: Create Razorpay order from backend
     const { data } = await axios.post( `${process.env.REACT_APP_BACKEND_URL}/api/orders/create-razorpay-order`,
-      
-      
       {
       totalAmount:subtotal
     }, {

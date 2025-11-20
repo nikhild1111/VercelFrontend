@@ -12,6 +12,21 @@ import {
 
 import { setOrderTotalPages } from "../Slices/orderFiltersSlice";
 
+
+// ✅ Explanation:
+// You’re creating a Redux Thunk function
+
+// It returns another async function
+
+// That function receives both:
+
+// dispatch — to dispatch actions (like setOrders, setLoading, etc.)
+
+// getState — to access current Redux state (like state.auth.token)
+
+// here also we can give arguemnt its a funtion take argiment and dispaxcth and return a  funtion whcih perform the dispach opration
+ 
+
 const adminfetchFilteredOrders = () => async (dispatch, getState) => {
   try {
     dispatch(fetchOrdersStart());
