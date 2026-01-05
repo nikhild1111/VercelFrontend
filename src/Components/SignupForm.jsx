@@ -35,10 +35,24 @@ const SignupForm = () => {
     e.preventDefault();
     const { name, email, password, confirmpassword, phone } = formData;
 
-    if (!isValidEmail(email)) return toast.error('Invalid email format');
-    if (!isValidPassword(password)) return toast.error('Password must be strong');
-    if (password !== confirmpassword) return toast.error("Passwords do not match");
-    if (!isValidPhoneNumber(phone)) return toast.error("Phone number must be 10 digits");
+   if (!isValidEmail(email)) {
+  return toast.error("Please enter a valid email address");
+}
+
+if (!isValidPassword(password)) {
+  return toast.error(
+    "Password must be at least 8 characters and include uppercase, lowercase, number, and special character"
+  );
+}
+
+if (password !== confirmpassword) {
+  return toast.error("Passwords do not match");
+}
+
+if (!isValidPhoneNumber(phone)) {
+  return toast.error("Phone number must be exactly 10 digits");
+}
+
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/signup`, {
